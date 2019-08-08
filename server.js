@@ -8,6 +8,11 @@ dotenv.config({ path: './config.env' });
 const port = process.env.PORT || 8000;
 const app = express();
 
+// Dev logging
+if (process.env.NODE_ENV === 'development') {
+	app.use(morgan('dev'));
+}
+
 app.listen(port, () => {
 	console.log(`Server running in ${process.env.NODE_ENV} mode on port ${port}.`);
 });
