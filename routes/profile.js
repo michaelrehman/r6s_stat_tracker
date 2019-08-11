@@ -33,8 +33,8 @@ router.get('/:platform/:gamertag', async (request, response) => {
 				message: 'Stats for this player could not be retrieved.'
 			});
 		} else {
-			return response.json({ search, topResultStats: playerStats });   // for testing
-			// return response.json({ player });   // for production
+			// return response.json({ search, topResultStats: playerStats });   // for testing
+			return response.json({ player, playerStats });   // for production
 		}
 	} catch (error) {
 		console.error(error);

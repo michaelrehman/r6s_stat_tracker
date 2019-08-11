@@ -15,17 +15,17 @@ export default {
 }
 </script>
 
-<style scoped>
-header {
-	background-color: black;
-}
-
+<style>
 img {
 	height: 200px;
 }
 
 /* Center image */
 @media screen and (max-width: 925px) {
+	.body-bg-img {
+		background-position: bottom;
+	}
+
 	img {
 		display: block;
 		margin: auto;
@@ -39,6 +39,10 @@ img {
 	}
 }
 @media screen and (max-width: 500px) {
+	.body-bg-img {
+		background-position: right;
+	}
+
 	img {
 		height: 60px;
 	}

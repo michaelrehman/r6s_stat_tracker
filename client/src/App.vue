@@ -1,6 +1,7 @@
 <template>
 	<div id="app">
 		<Header/>
+		<router-view/>
 	</div>
 </template>
 
@@ -8,24 +9,28 @@
 import Header from '@/components/Header.vue';
 
 export default {
-	nmae: 'app',
-	components: {
-		Header
-	}
+	name: 'app',
+	components: { Header }
 }
 </script>
 
 <style>
+:root {
+	--gray: #dcdcdc;
+}
+
 * {
 	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
 }
 
-body {
-	display: block;
-	margin: auto;
-	background: darkgray;
+.body-bg-img {
+	background: #121212 url('./assets/bgimg.png') no-repeat top right;
+}
+
+.body-bg-no-img {
+	background: #121212;
 }
 
 #app {
@@ -33,6 +38,12 @@ body {
 	max-width: 1200px;
 	margin: auto;
 	padding: 1rem 3rem;
-	background: gray;
+	color: var(--gray);
+}
+
+.container {
+	width: 100%;
+	margin: auto;
+	padding: 1.5rem;
 }
 </style>
