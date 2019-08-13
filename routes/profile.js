@@ -4,7 +4,7 @@ const scout = require('@scoutsdk/server-sdk');
 
 scout.configure({
 	clientId: process.env.TRACKER_API_KEY,
-	clientSecret: 'cefdc776c0d1fd2d323528c602441a162d07c4512b22e22fef9b67973db72f8c',
+	clientSecret: process.env.TRACKER_API_SECRET,
 	scope: 'public.read'
 });
 
