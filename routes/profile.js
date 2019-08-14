@@ -1,26 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const scout = require('@scoutsdk/server-sdk');
-
-scout.configure({
-	clientId: process.env.TRACKER_API_KEY,
-	clientSecret: process.env.TRACKER_API_SECRET,
-	scope: 'public.read'
-});
+const fetch = require('node-fetch')
 
 router.get('/:platform/:gamertag', async (request, response) => {
 	try {
 		const { platform, gamertag } = request.params;
-		const search = await scout.players.search(gamertag, platform, null, 'r6siege');
 		let player;
 		let playerStats;
+		// Get players
+		const respPlayer = await fetch(`https://r6tab.com/api/search.php?platform=${platform}&search=${gamertag}`);
+		const search = await respPlayer.json();
 
-		// Check if we have any results and get the top one
-		// otherwise we found no players
+		// Check if we have any players before we starts pulling data
 		if (search.results.length > 0) {
 			const topResult = search.results[0];
-			playerStats = await scout.players.get('r6siege', topResult.player.playerId);
-			player = topResult.persona;
+			player = topResult;
+			// Get player stats
+			const respStats = await fetch(`https://r6tab.com/api/player.php?p_id=${player.p_id}`);
+			playerStats = await respStats.json();
 		} else {
 			return response.status(404).json({
 				message: 'No players found.'
@@ -33,8 +30,10 @@ router.get('/:platform/:gamertag', async (request, response) => {
 				message: 'Stats for this player could not be retrieved.'
 			});
 		} else {
-			// return response.json({ search, topResultStats: playerStats });   // for testing
-			return response.json({ player, playerStats });   // for production
+			// search for displaying a list of all the found players
+			// player for basic stats and info
+			// playerStats for in-depth stats and info
+			return response.json({ search, player, playerStats });
 		}
 	} catch (error) {
 		console.error(error);

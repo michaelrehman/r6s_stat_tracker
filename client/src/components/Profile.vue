@@ -6,22 +6,29 @@
 		<h1>{{ error }}</h1>
 		<router-link to="/">Go Back</router-link>
 	</div>
-	<section v-else-if="profileData" id="profile" class="container">
-		<h1>{{ profileData.player.handle }}</h1>
-		<div class="grid">
-			<div id="profileImageContainer">
-				<img src="" alt="Most played operator">
+	<section v-else-if="playerData" id="profile" class="container">
+		<header>
+			<div id="playerAvatarName">
+				<img id="avatar" :src="`https://ubisoft-avatars.akamaized.net/${playerData.player.p_user}/default_146_146.png`" alt="Player avatar">
+				<h1>{{ playerData.player.p_name }}</h1>
 			</div>
+			<span>Current MMR: {{ playerData.player.p_currentmmr }}</span>
+		</header>
+		<div class="grid">
+			<div id="profileImageContainer"></div>
+			<ul id="stats">
+
+			</ul>
 		</div>
 
-		<!-- <h3>Win Rate: {{ Math.round(getStat('winRate') * 10000) / 100 }}</h3> -->
+		<h3>Seasonal Win Rate: {{ getWinRate }}%</h3>
 		<!-- <h3>K/D Ratio: {{ getStat('killDeathRatio') }}</h3> -->
 		<!--
 			Win rate in % (wins & losses)
 			Time played in hours
 			K/D Ratio (kills & deaths)
 			Total XP
-		 -->
+		-->
 	</section>
 </template>
 
@@ -34,7 +41,16 @@ export default {
 		return {
 			loading: true,
 			error: null,
-			profileData: null
+			playerData: null
+		}
+	},
+	computed: {
+		getWinRate() {
+			const ref = this.playerData.playerStats.seasonal;
+			// TODO: Fix calculation
+			const winsOverTotal = (ref.total_casualwins + ref.total_rankedwins + ref.total_generalwins + ref.bomb_wins) / (ref.total_casualtotal + ref.total_rankedtotal + ref.total_generaltotal + ref.bomb_total);
+			const rounded = Math.round(winsOverTotal * 10000) / 100
+			return rounded;
 		}
 	},
 	beforeCreate() {
@@ -46,36 +62,19 @@ export default {
 			const resp = await axios.get(
 				`/api/v1/profile/${this.$route.params.platform}/${this.$route.params.gamertag}`
 			);
-			this.profileData = resp.data;
+			this.playerData = resp.data;
 
 			// Using fetch (you get a Response object and have to convert to JSON)
 			// const resp = await fetch(
 			// 	`/api/v1/profile/${this.$route.params.platform}/${this.$route.params.gamertag}`
 			// );
-			// this.profileData = await resp.json();
+			// this.playerData = await resp.json();
 
 			this.loading = false;
 		} catch (err) {
 			this.loading = false;
 			// Using axios (not sure how to get the error using fetch)
 			this.error = err.response.data.message;
-		}
-	},
-	methods: {
-		getStat(statName) {
-			const indexOfStat = this.findIndexOf(statName);
-			const statDisplayValue = this.profileData.playerStats.stats[indexOfStat].displayValue;
-			return statDisplayValue;
-		},
-		findIndexOf(keyValue) {
-			let indexOf = -1;
-			this.profileData.playerStats.stats.forEach((statObj, index) => {
-				const idx = index;
-				if (statObj.metadata.key === keyValue) {
-					indexOf = index;
-				}
-			});
-			return indexOf;
 		}
 	}
 }
@@ -85,5 +84,17 @@ export default {
 #profile {
 	border-radius: 15px;
 	background-color: rgba(0, 0, 0, 0.3);
+}
+
+#playerAvatarName {
+	display: flex;
+	justify-content: start;
+	align-items: center;
+}
+
+#avatar {
+	width: 50px;
+	height: 50px;
+	margin-right: 15px;
 }
 </style>

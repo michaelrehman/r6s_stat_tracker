@@ -1,5 +1,5 @@
 <template>
-	<header>
+	<header id="mainHeader">
 		<img :src="image" alt="Rainbow Six Siege Logo">
 	</header>
 </template>
