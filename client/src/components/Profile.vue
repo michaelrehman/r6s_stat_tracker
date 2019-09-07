@@ -4,31 +4,55 @@
 	</div>
 	<div v-else-if="error">
 		<h1>{{ error }}</h1>
-		<router-link to="/">Go Back</router-link>
+		<router-link
+			:to="`/results/${this.$route.params.platform}/${this.$route.params.gamertag}`">
+			Go Back
+		</router-link>
 	</div>
 	<section v-else-if="playerData" id="profile" class="container">
 		<header>
-			<div id="playerAvatarName">
-				<img id="avatar" :src="`https://ubisoft-avatars.akamaized.net/${playerData.player.p_user}/default_146_146.png`" alt="Player avatar">
-				<h1>{{ playerData.player.p_name }}</h1>
+			<div id="avatarName">
+				<img id="avatar" :src="`https://ubisoft-avatars.akamaized.net/${playerData.p_user}/default_146_146.png`" alt="Player avatar">
+				<h1>{{ playerData.p_name }}</h1>
 			</div>
-			<span>Current MMR: {{ playerData.player.p_currentmmr }}</span>
+			<div id="lvlMMR">
+				<p>LVL {{ playerData.p_level }}</p>&nbsp;|&nbsp;
+				<p>MMR {{ playerData.p_currentmmr }}</p>
+			</div>
 		</header>
-		<div class="grid">
-			<div id="profileImageContainer"></div>
-			<ul id="stats">
-
-			</ul>
-		</div>
-
-		<h3>Seasonal Win Rate: {{ getWinRate }}%</h3>
-		<!-- <h3>K/D Ratio: {{ getStat('killDeathRatio') }}</h3> -->
-		<!--
-			Win rate in % (wins & losses)
-			Time played in hours
-			K/D Ratio (kills & deaths)
-			Total XP
-		-->
+		<section id="stats">
+			<article id="general">
+				<header>
+					<h3>General Stats</h3>
+				</header>
+				<ul id="generalStatsList">
+					<li><h4>Ranked K/D:</h4> {{ playerData.kd / 100 }}</li>
+					<li><h4>Headshot Accuracy:</h4> {{ playerData.p_headshotacc / 1000000 }}%</li>
+				</ul>
+			</article>
+			<article id="seasonal">
+				<header>
+					<h3>Seasonal Stats</h3>
+				</header>
+				<ul id="seasonalStatsList">
+					<li><h4>Win Rate</h4>
+						<ul id="seasonalWinRate">
+							<li>General: {{ getWinRate('general') }}%</li>
+							<li>Casual: {{ getWinRate('casual') }}%</li>
+							<li>Ranked: {{ getWinRate('ranked') }}%</li>
+						</ul>
+					</li>
+					<li><h4>K/D</h4>
+						<ul id="seasonalKD">
+							<li>General: {{ getKD('general') }}</li>
+							<li>Casual: {{ getKD('casual') }}</li>
+							<li>Ranked: {{ getKD('ranked') }}</li>
+						</ul>
+					</li>
+				</ul>
+			</article>
+		</section>
+		<router-link to="/">Back To Search</router-link>
 	</section>
 </template>
 
@@ -44,13 +68,34 @@ export default {
 			playerData: null
 		}
 	},
+	// Win Rate (total), Accuracy (total), K/D (ranked, casual), Time Played (total, ranked, casual), Level
 	computed: {
-		getWinRate() {
-			const ref = this.playerData.playerStats.seasonal;
-			// TODO: Fix calculation
-			const winsOverTotal = (ref.total_casualwins + ref.total_rankedwins + ref.total_generalwins + ref.bomb_wins) / (ref.total_casualtotal + ref.total_rankedtotal + ref.total_generaltotal + ref.bomb_total);
-			const rounded = Math.round(winsOverTotal * 10000) / 100
-			return rounded;
+
+	},
+	methods: {
+		getWinRate(type) {
+			const ref = this.playerData.seasonal;
+			let winsOverTotal;
+			if (type === 'general') {
+				winsOverTotal = (ref.total_casualwins + ref.total_rankedwins + ref.total_generalwins + ref.bomb_wins + ref.secure_wins + ref.hostage_wins) / (ref.total_casualtotal + ref.total_rankedtotal + ref.total_generaltotal + ref.bomb_total + ref.secure_total + ref.hostage_total);
+			} else if (type === 'casual') {
+				winsOverTotal = ref.total_casualwins / ref.total_casualtotal;
+			} else {
+				winsOverTotal = ref.total_rankedwins / ref.total_rankedtotal;
+			}
+			return (winsOverTotal * 100).toFixed(2);
+		},
+		getKD(type) {
+			const ref = this.playerData.seasonal;
+			let kd;
+			if (type === 'general') {
+				kd = ref.total_generalkills / ref.total_generaldeaths;
+			} else if (type === 'casual') {
+				kd = ref.total_casualkills / ref.total_casualdeaths;
+			} else {
+				kd = ref.total_rankedkills / ref.total_rankeddeaths;
+			}
+			return kd.toFixed(2);
 		}
 	},
 	beforeCreate() {
@@ -81,20 +126,41 @@ export default {
 </script>
 
 <style scoped>
-#profile {
-	border-radius: 15px;
-	background-color: rgba(0, 0, 0, 0.3);
+h3 {
+	font-weight: 500;
+	font-size: 1.5em;
 }
 
-#playerAvatarName {
+#profile {
+	border-radius: 15px;
+	background-color: rgba(0, 0, 0, 0.5);
+}
+
+header {
 	display: flex;
-	justify-content: start;
+	justify-content: space-between;
+}
+
+header > div {
+	display: flex;
+	justify-content: flex-start;
 	align-items: center;
 }
 
-#avatar {
-	width: 50px;
-	height: 50px;
-	margin-right: 15px;
+#stats {
+	display: grid;
+	margin: 1rem 0;
+	grid-template-columns: 1fr 1fr;
+	grid-gap: 1rem;
+}
+
+#stats > article {
+	padding: 1rem;
+	background-color: rgba(55, 7, 95, 0.5);
+	border-radius: 25px;
+}
+
+ul > li > h4 {
+	display: inline-block;
 }
 </style>

@@ -19,3 +19,4 @@ app.listen(port, () => {
 
 // Profile routes
 app.use('/api/v1/profile', require('./routes/profile'));
+app.use('/api/v1/results', require('./routes/results'));

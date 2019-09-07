@@ -5,7 +5,7 @@
 			<div class="form-group">
 				<label for="i_platform">Platform</label>
 				<select id="i_platform" name="platform" v-model="platform">
-					<option value="psn">Playstaion</option>
+					<option value="psn">Playstation</option>
 					<option value="xbl">Xbox</option>
 					<option value="uplay">Uplay</option>
 				</select>
@@ -43,7 +43,7 @@ export default {
 					type: 'error'
 				});
 			} else {
-				this.$router.push(`/profile/${this.platform}/${this.gamertag}`)
+				this.$router.push(`/results/${this.platform}/${this.gamertag}`);
 			}
 		}
 	}
@@ -55,7 +55,7 @@ export default {
 	margin: 1.5rem 0;
 	padding: 1rem;
 	border: 3px solid var(--gray);
-	background: rgba(0, 0, 0, 0.3);
+	background: rgba(0, 0, 0, 0.5);
 }
 
 input, select {

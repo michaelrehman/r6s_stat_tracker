@@ -1,17 +1,12 @@
 <template>
 	<header id="mainHeader">
-		<img :src="image" alt="Rainbow Six Siege Logo">
+		<img src="@/assets/logo.png" alt="Rainbow Six Siege Logo">
 	</header>
 </template>
 
 <script>
 export default {
-	name: 'Header',
-	data() {
-		return {
-			image: require('@/assets/logo.png')
-		}
-	}
+	name: 'Header'
 }
 </script>
 

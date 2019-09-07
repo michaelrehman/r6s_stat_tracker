@@ -17,6 +17,7 @@ export default {
 <style>
 :root {
 	--gray: #dcdcdc;
+	--link-color: #165E8B;
 }
 
 * {
@@ -25,12 +26,37 @@ export default {
 	padding: 0;
 }
 
+a {
+	color: var(--link-color);
+	font-size: 1rem;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:visited {
+	color: var(--link-color);
+}
+
+ul, ol {
+	list-style: none;
+}
+
 .body-bg-img {
 	background: #121212 url('./assets/bgimg.png') no-repeat top right;
 }
 
 .body-bg-no-img {
 	background: #121212;
+}
+
+nav {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
 
 #app {
@@ -45,5 +71,11 @@ export default {
 	width: 100%;
 	margin: auto;
 	padding: 1.5rem;
+}
+
+#avatar, .avatar {
+	width: 50px;
+	height: 50px;
+	margin-right: 15px;
 }
 </style>
