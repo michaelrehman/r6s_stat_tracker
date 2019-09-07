@@ -14,9 +14,9 @@ app.use('/api/v1/results', require('./routes/results'));
 
 if (process.env.NODE_ENV === 'production') {
 	// Static folder
-	app.use(express.static(__dirname, '/docs/'));
+	app.use(express.static(__dirname, '/public/'));
 	// SPA Handling
-	app.get(/.*/, (req, res) => res.sendFile(__dirname + '/docs/index.html'));
+	app.get(/.*/, (req, res) => res.sendFile(__dirname + '/public/index.html'));
 }
 
 // Dev logging
