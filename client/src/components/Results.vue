@@ -6,7 +6,7 @@
 		<h1>{{ error }}</h1>
 		<router-link to="/">Go Back</router-link>
 	</div>
-	<div v-else-if="results.totalresults === 0">
+	<div v-else-if="numOfResults === 0">
 		<h1>No Results Found</h1>
 		<router-link to="/">Go Back</router-link>
 	</div>
@@ -31,6 +31,7 @@ export default {
 		return {
 			loading: true,
 			error: null,
+			numOfResults: null,
 			results: null,
 		}
 	},
@@ -42,7 +43,8 @@ export default {
 			const resp = await axios.get(
 				`/api/v1/results/${this.$route.params.platform}/${this.$route.params.gamertag}`
 			);
-			this.results = resp.data.results || resp.data;
+			this.numOfResults = resp.data.totalresults;
+			this.results = resp.data.results;
 			this.loading = false;
 		} catch (err) {
 			this.loading = false;
